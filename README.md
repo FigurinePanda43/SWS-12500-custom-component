@@ -7,6 +7,17 @@ This integration will listen for data from your station and passes them to respe
 
 _This custom component replaces [old integration via Node-RED and proxy server](https://github.com/schizza/WeatherStation-SWS12500)._
 
+## About this fork
+
+This is a fork of [schizza/SWS-12500-custom-component](https://github.com/schizza/SWS-12500-custom-component) with extended support for additional remote sensor channels.
+
+The upstream integration ships sensors for channels 2 through 4 (`CH2`-`CH4`). This fork adds full support for **channels 5 through 8** (`CH5`-`CH8`), covering both data protocols:
+
+- Default Weather Underground-style protocol (`REMAP_ITEMS` in `const.py`)
+- WSLink protocol (`REMAP_WSLINK_ITEMS` in `const.py`)
+
+Each additional channel exposes the same set of entities as the existing channels (temperature, humidity, connection status, and battery level where applicable), defined in `sensors_weather.py` and `sensors_wslink.py`, with matching translation strings.
+
 ## Warning - WSLink APP (applies also for SWS 12500 with firmware >3.0)
 
 For stations that are using WSLink app to setup station and WSLink API for resending data (SWS 12500 manufactured in 2024 and later). You will need to install [WSLink SSL proxy addon](https://github.com/schizza/wslink-addon) to your Home Assistant if you are not running your Home Assistant instance in SSL mode or you do not have SSL proxy for your Home Assistant.
