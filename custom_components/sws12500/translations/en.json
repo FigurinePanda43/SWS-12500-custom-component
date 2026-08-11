@@ -29,7 +29,10 @@
       "valid_credentials_api": "Provide valid API ID.",
       "valid_credentials_key": "Provide valid API KEY.",
       "valid_credentials_match": "API ID and API KEY should not be the same.",
-      "windy_key_required": "Windy API key is required if you want to enable this function."
+      "windy_key_required": "Windy API key is required if you want to enable this function.",
+      "weathercloud_id_required": "Weathercloud ID is required if you want to enable this function.",
+      "weathercloud_key_required": "Weathercloud Key is required if you want to enable this function.",
+      "weathercloud_send_minimum": "Minimum resend interval is 60 seconds (600 seconds for free accounts)."
     },
     "step": {
       "init": {
@@ -37,7 +40,9 @@
         "description": "Choose what do you want to configure. If basic access or resending data for Windy site",
         "menu_options": {
           "basic": "Basic - configure credentials for Weather Station",
-          "windy": "Windy configuration"
+          "windy": "Windy configuration",
+          "pocasi": "Pocasi Meteo CZ configuration",
+          "weathercloud": "Weathercloud configuration"
         }
       },
       "basic": {
@@ -85,6 +90,24 @@
           "POCASI_CZ_SEND_INTERVAL": "Resend interval in seconds (minimum 12s, default 30s)",
           "pocasi_enabled_checkbox": "Enables resending data to Pocasi Meteo",
           "pocasi_logger_checkbox": "Enable only if you want to send debbug data to the developer"
+        }
+      },
+      "weathercloud": {
+        "description": "Resend weather data to your Weathercloud station (https://app.weathercloud.net).",
+        "title": "Configure Weathercloud",
+        "data": {
+          "WEATHERCLOUD_ID": "Weathercloud ID",
+          "WEATHERCLOUD_KEY": "Weathercloud Key",
+          "WEATHERCLOUD_SEND_INTERVAL": "Resend interval in seconds",
+          "weathercloud_enabled_checkbox": "Enable resending data to Weathercloud",
+          "weathercloud_logger_checkbox": "Log Weathercloud data and responses"
+        },
+        "data_description": {
+          "WEATHERCLOUD_ID": "Device ID found in your Weathercloud device settings (Devices -> Settings -> Link device).",
+          "WEATHERCLOUD_KEY": "Device Key found in your Weathercloud device settings (Devices -> Settings -> Link device).",
+          "WEATHERCLOUD_SEND_INTERVAL": "Weathercloud accepts one update per 10 minutes (600s). Only Pro and Premium accounts may send data every minute (60s).",
+          "weathercloud_enabled_checkbox": "Enables resending data to Weathercloud.",
+          "weathercloud_logger_checkbox": "Enable only if you want to send debuging data to the developer."
         }
       },
       "migration": {

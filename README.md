@@ -3,7 +3,7 @@
 
 # Integrates your Sencor SWS 12500 or 16600, GARNI, BRESSER weather stations seamlessly into Home Assistant
 
-This integration will listen for data from your station and passes them to respective sensors. It also provides the ability to push data to Windy API.
+This integration will listen for data from your station and passes them to respective sensors. It also provides the ability to push data to Windy API, Pocasi Meteo and Weathercloud.
 
 _This custom component replaces [old integration via Node-RED and proxy server](https://github.com/schizza/WeatherStation-SWS12500)._
 
@@ -111,6 +111,22 @@ As soon as the integration is added into Home Assistant it will listen for incom
 - Tick `Enable` checkbox.
 
 - You are done.
+
+## Resending data to Weathercloud
+
+- If you want to publish your data on [Weathercloud](https://app.weathercloud.net) you can enable resending your data to their servers.
+- You must have an account at Weathercloud with a device created. In your device settings (`Devices` -> `Settings` -> `Link device`) you will find the `Weathercloud ID` and the `Key`.
+- In `Settings` -> `Devices & services` find SWS12500 and click `Configure`.
+- In dialog box choose `Weathercloud configuration`.
+- Fill in `Weathercloud ID` and `Weathercloud Key` you were provided at `Weathercloud`.
+- Tick `Enable` checkbox.
+
+- You are done.
+
+> [!NOTE]
+> Weathercloud accepts one update per 10 minutes (600 seconds), which is the default resend interval. Only `Pro` and `Premium` accounts are allowed to send data more often (down to 60 seconds). If data is sent too often, Weathercloud rejects it and a warning is logged.
+
+All values are converted to the units Weathercloud expects (°C, hPa, m/s, mm), no matter whether your station uses the Weather Underground protocol or WSLink.
 
 ## WSLink notes
 

@@ -12,6 +12,12 @@ DATABASE_PATH = "/config/home-assistant_v2.db"
 POCASI_CZ_URL: Final = "http://ms.pocasimeteo.cz"
 POCASI_CZ_SEND_MINIMUM: Final = 12  # minimal time to resend data
 
+WEATHERCLOUD_URL: Final = "https://api.weathercloud.net/v01/set"
+# Weathercloud accepts one update per 10 minutes, Pro / Premium accounts
+# are allowed to send data every minute.
+WEATHERCLOUD_SEND_MINIMUM: Final = 60
+WEATHERCLOUD_SEND_DEFAULT: Final = 600
+
 ICON = "mdi:weather"
 
 API_KEY = "API_KEY"
@@ -34,6 +40,27 @@ POCASI_INVALID_KEY: Final = (
 POCASI_CZ_SUCCESS: Final = "Successfully sent data to Pocasi Meteo"
 POCASI_CZ_UNEXPECTED: Final = (
     "Pocasti Meteo responded unexpectedly 3 times in row. Resendig is now disabled!"
+)
+
+WEATHERCLOUD_ID = "WEATHERCLOUD_ID"
+WEATHERCLOUD_KEY = "WEATHERCLOUD_KEY"
+WEATHERCLOUD_SEND_INTERVAL = "WEATHERCLOUD_SEND_INTERVAL"
+WEATHERCLOUD_ENABLED: Final = "weathercloud_enabled_checkbox"
+WEATHERCLOUD_LOGGER_ENABLED: Final = "weathercloud_logger_checkbox"
+WEATHERCLOUD_SUCCESS: Final = "Successfully sent data to Weathercloud"
+WEATHERCLOUD_INVALID_KEY: Final = (
+    "Weathercloud refused the credentials. Sending data to Weathercloud is now "
+    "disabled. Check your Weathercloud ID / Key and try again."
+)
+WEATHERCLOUD_BAD_REQUEST: Final = (
+    "Weathercloud refused the data (bad request). No valid value was sent?"
+)
+WEATHERCLOUD_TOO_MANY: Final = (
+    "Weathercloud refused the data - sending too often. "
+    "Increase the resend interval (10 minutes for free accounts)."
+)
+WEATHERCLOUD_UNEXPECTED: Final = (
+    "Weathercloud responded unexpectedly 3 times in a row. Resending is now disabled!"
 )
 
 WINDY_API_KEY = "WINDY_API_KEY"

@@ -21,6 +21,13 @@ from .const import (
     POCASI_CZ_SEND_INTERVAL,
     POCASI_CZ_SEND_MINIMUM,
     SENSORS_TO_LOAD,
+    WEATHERCLOUD_ENABLED,
+    WEATHERCLOUD_ID,
+    WEATHERCLOUD_KEY,
+    WEATHERCLOUD_LOGGER_ENABLED,
+    WEATHERCLOUD_SEND_DEFAULT,
+    WEATHERCLOUD_SEND_INTERVAL,
+    WEATHERCLOUD_SEND_MINIMUM,
     WINDY_API_KEY,
     WINDY_ENABLED,
     WINDY_LOGGER_ENABLED,
@@ -51,6 +58,8 @@ class ConfigOptionsFlowHandler(OptionsFlow):
         self.migrate_schema = {}
         self.pocasi_cz: dict[str, Any] = {}
         self.pocasi_cz_schema = {}
+        self.weathercloud: dict[str, Any] = {}
+        self.weathercloud_schema = {}
 
         @property
         def config_entry(self):
@@ -133,10 +142,45 @@ class ConfigOptionsFlowHandler(OptionsFlow):
             ): bool,
         }
 
+        self.weathercloud = {
+            WEATHERCLOUD_ID: self.config_entry.options.get(WEATHERCLOUD_ID, ""),
+            WEATHERCLOUD_KEY: self.config_entry.options.get(WEATHERCLOUD_KEY, ""),
+            WEATHERCLOUD_ENABLED: self.config_entry.options.get(
+                WEATHERCLOUD_ENABLED, False
+            ),
+            WEATHERCLOUD_LOGGER_ENABLED: self.config_entry.options.get(
+                WEATHERCLOUD_LOGGER_ENABLED, False
+            ),
+            WEATHERCLOUD_SEND_INTERVAL: self.config_entry.options.get(
+                WEATHERCLOUD_SEND_INTERVAL, WEATHERCLOUD_SEND_DEFAULT
+            ),
+        }
+
+        self.weathercloud_schema = {
+            vol.Optional(
+                WEATHERCLOUD_ID, default=self.weathercloud.get(WEATHERCLOUD_ID)
+            ): str,
+            vol.Optional(
+                WEATHERCLOUD_KEY, default=self.weathercloud.get(WEATHERCLOUD_KEY)
+            ): str,
+            vol.Required(
+                WEATHERCLOUD_SEND_INTERVAL,
+                default=self.weathercloud.get(WEATHERCLOUD_SEND_INTERVAL),
+            ): int,
+            vol.Optional(
+                WEATHERCLOUD_ENABLED,
+                default=self.weathercloud.get(WEATHERCLOUD_ENABLED),
+            ): bool,
+            vol.Optional(
+                WEATHERCLOUD_LOGGER_ENABLED,
+                default=self.weathercloud.get(WEATHERCLOUD_LOGGER_ENABLED),
+            ): bool,
+        }
+
     async def async_step_init(self, user_input=None):
         """Manage the options - show menu first."""
         return self.async_show_menu(
-            step_id="init", menu_options=["basic", "windy", "pocasi"]
+            step_id="init", menu_options=["basic", "windy", "pocasi", "weathercloud"]
         )
 
     async def async_step_basic(self, user_input=None):
@@ -167,6 +211,9 @@ class ConfigOptionsFlowHandler(OptionsFlow):
 
             # retain pocasi data
             user_input.update(self.pocasi_cz)
+
+            # retain weathercloud data
+            user_input.update(self.weathercloud)
 
             return self.async_create_entry(title=DOMAIN, data=user_input)
 
@@ -210,6 +257,9 @@ class ConfigOptionsFlowHandler(OptionsFlow):
 
         user_input.update(self.pocasi_cz)
 
+        # retain weathercloud
+        user_input.update(self.weathercloud)
+
         return self.async_create_entry(title=DOMAIN, data=user_input)
 
     async def async_step_pocasi(self, user_input: Any = None) -> ConfigFlowResult:
@@ -249,6 +299,55 @@ class ConfigOptionsFlowHandler(OptionsFlow):
 
         # retain windy
         user_input.update(self.windy_data)
+
+        # retain weathercloud
+        user_input.update(self.weathercloud)
+
+        return self.async_create_entry(title=DOMAIN, data=user_input)
+
+    async def async_step_weathercloud(
+        self, user_input: Any = None
+    ) -> ConfigFlowResult:
+        """Handle the Weathercloud step."""
+
+        errors = {}
+
+        await self._get_entry_data()
+
+        if user_input is None:
+            return self.async_show_form(
+                step_id="weathercloud",
+                data_schema=vol.Schema(self.weathercloud_schema),
+                errors=errors,
+            )
+
+        if user_input.get(WEATHERCLOUD_SEND_INTERVAL, 0) < WEATHERCLOUD_SEND_MINIMUM:
+            errors[WEATHERCLOUD_SEND_INTERVAL] = "weathercloud_send_minimum"
+
+        if user_input.get(WEATHERCLOUD_ENABLED):
+            if user_input.get(WEATHERCLOUD_ID) == "":
+                errors[WEATHERCLOUD_ID] = "weathercloud_id_required"
+            if user_input.get(WEATHERCLOUD_KEY) == "":
+                errors[WEATHERCLOUD_KEY] = "weathercloud_key_required"
+
+        if len(errors) > 0:
+            return self.async_show_form(
+                step_id="weathercloud",
+                data_schema=vol.Schema(self.weathercloud_schema),
+                errors=errors,
+            )
+
+        # retain user data
+        user_input.update(self.user_data)
+
+        # retain senors
+        user_input.update(self.sensors)
+
+        # retain windy
+        user_input.update(self.windy_data)
+
+        # retain pocasi
+        user_input.update(self.pocasi_cz)
 
         return self.async_create_entry(title=DOMAIN, data=user_input)
 

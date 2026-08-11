@@ -32,7 +32,10 @@
       "windy_key_required": "Je vyžadován Windy API key, pokud chcete aktivovat přeposílání dat na Windy",
       "pocasi_id_required": "Je vyžadován Počasí ID, pokud chcete aktivovat přeposílání dat na Počasí Meteo CZ",
       "pocasi_key_required": "Klíč k účtu Počasí Meteo je povinný.",
-      "pocasi_send_minimum": "Minimální interval pro přeposílání je 12 sekund."
+      "pocasi_send_minimum": "Minimální interval pro přeposílání je 12 sekund.",
+      "weathercloud_id_required": "Je vyžadováno Weathercloud ID, pokud chcete aktivovat přeposílání dat na Weathercloud.",
+      "weathercloud_key_required": "Klíč (Key) k zařízení na Weathercloud je povinný.",
+      "weathercloud_send_minimum": "Minimální interval pro přeposílání je 60 sekund (600 sekund pro účty zdarma)."
     },
     "step": {
       "init": {
@@ -42,7 +45,8 @@
           "basic": "Základní - přístupové údaje (přihlášení)",
           "windy": "Nastavení pro přeposílání dat na Windy",
           "pocasi": "Nastavení pro přeposlání dat na Počasí Meteo CZ",
-          "migration": "Migrace statistiky senzoru"
+          "migration": "Migrace statistiky senzoru",
+          "weathercloud": "Nastavení pro přeposílání dat na Weathercloud"
         }
       },
       "basic": {
@@ -90,6 +94,24 @@
           "POCASI_SEND_INTERVAL": "Interval v jakém se mají data na server přeposílat (minimum 12s, defaultně 30s)",
           "pocasi_enabled_checkbox": "Zapne přeposílání data na server Počasí Meteo",
           "pocasi_logger_checkbox": "Zapnout pouze v případě, že chcete zaslat ladící informace vývojáři."
+        }
+      },
+      "weathercloud": {
+        "description": "Přeposílání dat na vaši stanici na Weathercloud (https://app.weathercloud.net).",
+        "title": "Konfigurace Weathercloud",
+        "data": {
+          "WEATHERCLOUD_ID": "Weathercloud ID",
+          "WEATHERCLOUD_KEY": "Weathercloud Key (klíč)",
+          "WEATHERCLOUD_SEND_INTERVAL": "Interval v sekundách",
+          "weathercloud_enabled_checkbox": "Povolit přeposílání dat na Weathercloud",
+          "weathercloud_logger_checkbox": "Logovat data a odpovědi z Weathercloud"
+        },
+        "data_description": {
+          "WEATHERCLOUD_ID": "ID zařízení najdete v nastavení svého zařízení na Weathercloud (Devices -> Settings -> Link device).",
+          "WEATHERCLOUD_KEY": "Klíč (Key) zařízení najdete v nastavení svého zařízení na Weathercloud (Devices -> Settings -> Link device).",
+          "WEATHERCLOUD_SEND_INTERVAL": "Weathercloud přijímá data jednou za 10 minut (600s). Pouze účty Pro a Premium mohou posílat data každou minutu (60s).",
+          "weathercloud_enabled_checkbox": "Zapne přeposílání dat na Weathercloud.",
+          "weathercloud_logger_checkbox": "Zapnout pouze v případě, že chcete zaslat ladící informace vývojáři."
         }
       },
       "migration": {

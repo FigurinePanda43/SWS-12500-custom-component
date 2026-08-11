@@ -19,6 +19,7 @@ from .const import (
     DOMAIN,
     POCASI_CZ_ENABLED,
     SENSORS_TO_LOAD,
+    WEATHERCLOUD_ENABLED,
     WINDY_ENABLED,
     WSLINK,
     WSLINK_URL,
@@ -35,6 +36,7 @@ from .utils import (
     translations,
     update_options,
 )
+from .weathercloud import WeathercloudPush
 from .windy_func import WindyPush
 
 _LOGGER = logging.getLogger(__name__)
@@ -54,6 +56,7 @@ class WeatherDataUpdateCoordinator(DataUpdateCoordinator):
         self.config = config
         self.windy = WindyPush(hass, config)
         self.pocasi: PocasiPush = PocasiPush(hass, config)
+        self.weathercloud: WeathercloudPush = WeathercloudPush(hass, config)
         super().__init__(hass, _LOGGER, name=DOMAIN)
 
     async def recieved_data(self, webdata):
@@ -90,6 +93,11 @@ class WeatherDataUpdateCoordinator(DataUpdateCoordinator):
 
         if self.config.options.get(POCASI_CZ_ENABLED):
             await self.pocasi.push_data_to_server(data, "WSLINK" if _wslink else "WU")
+
+        if self.config.options.get(WEATHERCLOUD_ENABLED):
+            await self.weathercloud.push_data_to_weathercloud(
+                data, "WSLINK" if _wslink else "WU"
+            )
 
         remaped_items = (
             remap_wslink_items(data)
