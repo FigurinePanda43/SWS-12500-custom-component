@@ -12,7 +12,6 @@ from homeassistant.const import (
     UnitOfPressure,
     UnitOfSpeed,
     UnitOfTemperature,
-    UnitOfVolumetricFlux,
 )
 
 from .const import (
@@ -137,23 +136,32 @@ SENSOR_TYPES_WEATHER_API: tuple[WeatherSensorEntityDescription, ...] = (
         options=list(UnitOfDir),
         translation_key=WIND_AZIMUT,
     ),
+    # `rainin` is the rainfall accumulated over the past 60 minutes (rolling
+    # window), so it is a precipitation depth, not an accumulating counter:
+    # the value drops again once the rain leaves the window. MEASUREMENT is
+    # therefore the only correct state class - TOTAL would make the recorder
+    # accumulate a meaningless (double counted) sum.
     WeatherSensorEntityDescription(
         key=RAIN,
         native_unit_of_measurement=UnitOfPrecipitationDepth.INCHES,
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.TOTAL,
+        state_class=SensorStateClass.MEASUREMENT,
         suggested_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         suggested_display_precision=2,
         icon="mdi:weather-pouring",
         translation_key=RAIN,
         value_fn=lambda data: cast("float", data),
     ),
+    # `dailyrainin` is the rainfall accumulated since local midnight, in
+    # inches. It is a depth (not a flux), it only grows during the day and the
+    # station resets it to 0 at midnight - which is exactly the semantics of
+    # TOTAL_INCREASING.
     WeatherSensorEntityDescription(
         key=DAILY_RAIN,
-        native_unit_of_measurement=UnitOfVolumetricFlux.INCHES_PER_DAY,
-        state_class=SensorStateClass.MEASUREMENT,
-        device_class=SensorDeviceClass.PRECIPITATION_INTENSITY,
-        suggested_unit_of_measurement=UnitOfVolumetricFlux.MILLIMETERS_PER_DAY,
+        native_unit_of_measurement=UnitOfPrecipitationDepth.INCHES,
+        state_class=SensorStateClass.TOTAL_INCREASING,
+        device_class=SensorDeviceClass.PRECIPITATION,
+        suggested_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         suggested_display_precision=2,
         icon="mdi:weather-pouring",
         translation_key=DAILY_RAIN,

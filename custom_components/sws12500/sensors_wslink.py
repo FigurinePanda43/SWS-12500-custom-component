@@ -143,6 +143,8 @@ SENSOR_TYPES_WSLINK: tuple[WeatherSensorEntityDescription, ...] = (
         options=list(UnitOfDir),
         translation_key=WIND_AZIMUT,
     ),
+    # `t1rainra` is the instantaneous rain rate reported by the station in
+    # mm/h - a real precipitation intensity, kept as MEASUREMENT.
     WeatherSensorEntityDescription(
         key=RAIN,
         native_unit_of_measurement=UnitOfVolumetricFlux.MILLIMETERS_PER_HOUR,
@@ -154,17 +156,24 @@ SENSOR_TYPES_WSLINK: tuple[WeatherSensorEntityDescription, ...] = (
         translation_key=RAIN,
         value_fn=lambda data: cast("float", data),
     ),
+    # `t1raindy` accumulates the rainfall of the current day in mm and is
+    # reset to 0 by the station at midnight -> TOTAL_INCREASING.
     WeatherSensorEntityDescription(
         key=DAILY_RAIN,
         native_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL_INCREASING,
         suggested_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         suggested_display_precision=2,
         icon="mdi:weather-pouring",
         translation_key=DAILY_RAIN,
         value_fn=lambda data: cast("float", data),
     ),
+    # `t1rainhr` is the rainfall of the last hour in mm. Depending on the
+    # firmware this is a rolling 60 minute window (the value goes down again as
+    # rain ages out) rather than an accumulator reset on the full hour, so it is
+    # deliberately left as MEASUREMENT: declaring TOTAL_INCREASING here would
+    # make the recorder log spurious resets and inflate the long term sum.
     WeatherSensorEntityDescription(
         key=HOURLY_RAIN,
         native_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
@@ -176,33 +185,39 @@ SENSOR_TYPES_WSLINK: tuple[WeatherSensorEntityDescription, ...] = (
         translation_key=HOURLY_RAIN,
         value_fn=lambda data: cast("float", data),
     ),
+    # `t1rainwy` accumulates the rainfall of the current week in mm and is
+    # reset to 0 by the station at the start of the week -> TOTAL_INCREASING.
     WeatherSensorEntityDescription(
         key=WEEKLY_RAIN,
         native_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL_INCREASING,
         suggested_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         suggested_display_precision=2,
         icon="mdi:weather-pouring",
         translation_key=WEEKLY_RAIN,
         value_fn=lambda data: cast("float", data),
     ),
+    # `t1rainmth` accumulates the rainfall of the current month in mm and is
+    # reset to 0 by the station on the first day of the month -> TOTAL_INCREASING.
     WeatherSensorEntityDescription(
         key=MONTHLY_RAIN,
         native_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL_INCREASING,
         suggested_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         suggested_display_precision=2,
         icon="mdi:weather-pouring",
         translation_key=MONTHLY_RAIN,
         value_fn=lambda data: cast("float", data),
     ),
+    # `t1rainyr` accumulates the rainfall of the current year in mm and is
+    # reset to 0 by the station on January 1st -> TOTAL_INCREASING.
     WeatherSensorEntityDescription(
         key=YEARLY_RAIN,
         native_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         device_class=SensorDeviceClass.PRECIPITATION,
-        state_class=SensorStateClass.MEASUREMENT,
+        state_class=SensorStateClass.TOTAL_INCREASING,
         suggested_unit_of_measurement=UnitOfPrecipitationDepth.MILLIMETERS,
         suggested_display_precision=2,
         icon="mdi:weather-pouring",
